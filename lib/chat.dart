@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
-class chat extends StatefulWidget {
 
-   final String userName;
-   final String profileImage;
-   
-     const chat({
-       super.key,
-       required this.userName,
-       required this.profileImage,
-     });
+class Chat extends StatefulWidget {
+  final String userName;
+  final String profileImage;
 
+  const Chat({super.key, required this.userName, required this.profileImage});
   @override
-  State<chat> createState() => _chatState();
+  State<Chat> createState() => _ChatState();
 }
 
-class _chatState extends State<chat> {
+class _ChatState extends State<Chat> {
   final List<Map<String, dynamic>> messages = [
     {'text': 'Hey, how are you?', 'isMe': false},
     {'text': 'I’m good, what about you?', 'isMe': true},
@@ -61,23 +56,22 @@ class _chatState extends State<chat> {
             ),
           ],
         ),
-         actions: [
-    IconButton(
-      icon: const Icon(
-        Icons.call,
-        color: Color(0xFFFF7A00), // orange accent color
-        size: 28,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.call,
+              color: Color(0xFFFF7A00), // orange accent color
+              size: 28,
+            ),
+            onPressed: () {
+              // You can later add call logic here
+              debugPrint('Call button pressed');
+            },
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
-      onPressed: () {
-        // You can later add call logic here
-        print('Call button pressed');
-      },
-    ),
-    const SizedBox(width: 10),
-  ],
-      ),
-      body: 
-      Column(
+      body: Column(
         children: [
           // 🗨️ Chat messages
           Expanded(
@@ -89,8 +83,9 @@ class _chatState extends State<chat> {
                 final isMe = msg['isMe'] as bool;
 
                 return Align(
-                  alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isMe
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
                     padding: const EdgeInsets.all(12),
@@ -101,10 +96,10 @@ class _chatState extends State<chat> {
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withAlpha((0.05 * 255).round()),
                           blurRadius: 3,
                           offset: const Offset(0, 2),
-                        )
+                        ),
                       ],
                     ),
                     child: Text(
@@ -126,23 +121,25 @@ class _chatState extends State<chat> {
             height: 100,
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(
-                top: BorderSide(color: Colors.grey, width: 0.3),
-              ),
+              border: Border(top: BorderSide(color: Colors.grey, width: 0.3)),
             ),
             child: Row(
               children: [
                 CircleAvatar(
-               radius: 22,
-               backgroundColor: const Color(0xFFF3F3F3),
-               child: IconButton(
-                 icon: const Icon(Icons.attach_file, color: Colors.black87, size: 22),
-                 onPressed: () {
-            print('File attach button pressed');
-          },
-        ),
-      ),
-      const SizedBox(width: 8),
+                  radius: 22,
+                  backgroundColor: const Color(0xFFF3F3F3),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.attach_file,
+                      color: Colors.black87,
+                      size: 22,
+                    ),
+                    onPressed: () {
+                      debugPrint('File attach button pressed');
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -151,7 +148,9 @@ class _chatState extends State<chat> {
                       filled: true,
                       fillColor: const Color(0xFFF3F3F3),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 12),
+                        horizontal: 15,
+                        vertical: 12,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                         borderSide: BorderSide.none,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'onboard3.dart';
-import 'PostOfferPage.dart';
+import 'postofferpage.dart';
+
 class Onboard2 extends StatelessWidget {
   const Onboard2({super.key});
 
@@ -13,9 +14,7 @@ class Onboard2 extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Center(
-              child: Image.asset('assets/on2.png', 
-              width: 400,
-              height: 500,),
+              child: Image.asset('assets/on2.png', width: 400, height: 500),
             ),
           ),
           Expanded(
@@ -24,8 +23,10 @@ class Onboard2 extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
               ),
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -68,20 +69,32 @@ class Onboard2 extends StatelessWidget {
                         width: 250,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context,
-               MaterialPageRoute(builder:
-               (context) => PostOfferPage()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PostOfferPage(),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF7A00),
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
+
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
-                          child: const Text('Post a job now', style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Post a job now',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
 
@@ -93,18 +106,28 @@ class Onboard2 extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                              builder: (context) => Onboard3(),
-                              ));
+                                builder: (context) => Onboard3(),
+                              ),
+                            );
                           },
                           style: OutlinedButton.styleFrom(
-                            side:  BorderSide.none,
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                            side: BorderSide.none,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
-                          child: const Text('Skip', style: TextStyle(
-                            color: Color(0xFFFF7A00),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Skip',
+                            style: TextStyle(
+                              color: Color(0xFFFF7A00),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],
