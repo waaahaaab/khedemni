@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'onboard3.dart';
-import 'postofferpage.dart';
 
 class Onboard2 extends StatelessWidget {
   const Onboard2({super.key});
@@ -49,7 +48,6 @@ class Onboard2 extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // Dots under the text
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -61,78 +59,35 @@ class Onboard2 extends StatelessWidget {
 
                   const Spacer(),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        height: 87,
-                        width: 250,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => PostOfferPage(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF7A00),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 24,
-                            ),
-
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                          ),
-                          child: const Text(
-                            'Post a job now',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                  // ======= NEW SINGLE BUTTON =======
+                  SizedBox(
+                    height: 87,
+                    width: 250,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Onboard3()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF7A00),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
                         ),
                       ),
-
-                      SizedBox(
-                        height: 87,
-                        width: 130,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Onboard3(),
-                              ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide.none,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 24,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                          ),
-                          child: const Text(
-                            'Skip',
-                            style: TextStyle(
-                              color: Color(0xFFFF7A00),
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

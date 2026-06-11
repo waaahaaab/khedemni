@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'account/login.dart';
+import 'account/createacc.dart'; // AJOUTÉ
+
 class Onboard3 extends StatelessWidget {
   const Onboard3({super.key});
 
@@ -12,9 +14,7 @@ class Onboard3 extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Center(
-              child: Image.asset('assets/on1.png',
-               width: 400,
-               height: 500,),
+              child: Image.asset('assets/on1.png', width: 400, height: 500),
             ),
           ),
           Expanded(
@@ -23,8 +23,10 @@ class Onboard3 extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
               ),
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -61,46 +63,71 @@ class Onboard3 extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      // BOUTON CREATE ACCOUNT - mène vers CreateAcc
                       SizedBox(
                         height: 87,
                         width: 250,
                         child: ElevatedButton(
                           onPressed: () {
-                             Navigator.push(
-                              context, MaterialPageRoute(
-                              builder: (context) => Login()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreateAcc(),
+                              ), // CHANGÉ ICI
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFFF7A00),
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
-                          child: const Text('Create account', style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Create account',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
 
+                      // BOUTON LOGIN - mène vers Login
                       SizedBox(
                         height: 87,
                         width: 130,
                         child: OutlinedButton(
                           onPressed: () {
                             Navigator.push(
-                              context, MaterialPageRoute(
-                              builder: (context) => Login()));
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Login(),
+                              ), // DÉJÀ CORRECT
+                            );
                           },
                           style: OutlinedButton.styleFrom(
-                            side:  BorderSide.none,
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                            side: BorderSide.none,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 24,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
-                          child: const Text('Login', style: TextStyle(
-                            color: Color(0xFFFF7A00),
-                             fontSize: 24,
-                            fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              color: Color(0xFFFF7A00),
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'navbar.dart';
+import 'pages/user_detail.dart';
+import '../services/api_service.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -9,10 +11,287 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String userName = 'User';
+  bool _isLoading = true;
+  List<dynamic> _allUsers = [];
+  List<dynamic> _filteredUsers = [];
+
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedCategory = 'All';
+
+  final List<String> _categories = [
+    'All',
+    'Design',
+    'Translation',
+    'Cooking',
+    'Photography',
+    'babysitting',
+    'coding',
+    'Delivery',
+    'Cleaning',
+    'Teaching',
+    'Repair',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+    _loadVisibleServiceSeekers();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final result = await ApiService.getProfile();
+
+      if (result['success'] == true && mounted) {
+        setState(() {
+          userName = result['data']['user']['name'] ?? 'User';
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading profile: $e');
+    }
+  }
+
+  Future<void> _loadVisibleServiceSeekers() async {
+    try {
+      final result = await ApiService.getVisibleServiceSeekers(limit: 50);
+
+      if (mounted && result['success'] == true) {
+        setState(() {
+          _allUsers = result['data']['users'] ?? [];
+          _filteredUsers = _allUsers;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading service seekers: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _filterUsers() {
+    setState(() {
+      _filteredUsers = _allUsers.where((user) {
+        // Filtre par catégorie
+        bool matchesCategory =
+            _selectedCategory == 'All' ||
+            user['category']?.toString().toLowerCase() ==
+                _selectedCategory.toLowerCase();
+
+        // Filtre par recherche
+        bool matchesSearch =
+            _searchController.text.isEmpty ||
+            user['name']?.toString().toLowerCase().contains(
+                  _searchController.text.toLowerCase(),
+                ) ==
+                true ||
+            user['skills']?.toString().toLowerCase().contains(
+                  _searchController.text.toLowerCase(),
+                ) ==
+                true ||
+            user['bio']?.toString().toLowerCase().contains(
+                  _searchController.text.toLowerCase(),
+                ) ==
+                true;
+
+        return matchesCategory && matchesSearch;
+      }).toList();
+    });
+  }
+
+  Widget _buildCategoryChip(String category) {
+    final isSelected = _selectedCategory == category;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedCategory = category;
+        });
+        _filterUsers();
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFFF7A00) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFFF7A00)
+                : const Color(0xFFE0E0E0),
+          ),
+        ),
+        child: Text(
+          category,
+          style: TextStyle(
+            color: isSelected ? Colors.white : const Color(0xFF11224E),
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserCard(Map<String, dynamic> user) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UserDetail(userId: user['id']),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFE0E0E0)),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage: user['profile_image'] != null
+                      ? NetworkImage(
+                          'http://localhost:5000${user['profile_image']}',
+                        )
+                      : null,
+                  child: user['profile_image'] == null
+                      ? const Icon(Icons.person, size: 30)
+                      : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user['name'] ?? 'User',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF11224E),
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (user['username'] != null)
+                        Text(
+                          '@${user['username']}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF7A00),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    user['category'] ?? 'General',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (user['bio'] != null && user['bio'].toString().isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                user['bio'],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 13, color: Colors.black87),
+              ),
+            ],
+            if (user['skills'] != null &&
+                user['skills'].toString().isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Color(0xFFFF7A00), size: 16),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      user['skills'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (user['wilaya'] != null) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: Color(0xFFFF7A00),
+                    size: 16,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    user['wilaya'],
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF7F8FC),
+      backgroundColor: const Color(0xFFF7F8FC),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 90,
@@ -20,20 +299,26 @@ class _HomeState extends State<Home> {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Hello Rania!\n',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                text: 'Hello ${userName.split(' ')[0]}!\n',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-              TextSpan(
-                text: 'Welcome to Khedemni.',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+              const TextSpan(
+                text: 'Découvrez les chercheurs de services',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),
         ),
-
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: GestureDetector(
@@ -46,18 +331,16 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          // BARRE DE RECHERCHE
           Container(
-            margin: EdgeInsets.only(left: 25, right: 25, bottom: 5, top: 15),
-            padding: EdgeInsets.only(right: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
             child: TextField(
-              obscureText: true, // hides password text
+              controller: _searchController,
+              onChanged: (value) => _filterUsers(),
               decoration: InputDecoration(
-                hintText: 'Search',
+                hintText: 'Rechercher par nom, compétences...',
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(
@@ -68,244 +351,76 @@ class _HomeState extends State<Home> {
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
                 ),
-                suffixIcon: const Icon(
-                  Icons.search,
-                  size: 24,
-                  color: Colors.grey,
-                ),
+                suffixIcon: const Icon(Icons.search, color: Colors.grey),
               ),
             ),
           ),
 
+          // FILTRES PAR CATÉGORIES
           Container(
-            margin: EdgeInsets.only(left: 25),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Choose your intrest',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+            height: 40,
+            margin: const EdgeInsets.only(bottom: 10),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              children: _categories
+                  .map((cat) => _buildCategoryChip(cat))
+                  .toList(),
+            ),
+          ),
 
-                const SizedBox(height: 10),
-
-                SizedBox(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
+          // LISTE DES UTILISATEURS
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _filteredUsers.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildCategoryCard('Design'),
-                        _buildCategoryCard('Translation'),
-                        _buildCategoryCard('Cooking'),
-                        _buildCategoryCard('Photography'),
-                        _buildCategoryCard('babysitting'),
-                        _buildCategoryCard('coding'),
+                        Icon(
+                          Icons.person_search,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          _allUsers.isEmpty
+                              ? 'Aucun chercheur de service visible'
+                              : 'Aucun résultat',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _allUsers.isEmpty
+                              ? 'Les service seekers peuvent activer\nleur visibilité dans leur profil'
+                              : 'Essayez une autre recherche ou catégorie',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[500],
+                          ),
+                        ),
                       ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadVisibleServiceSeekers,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      itemCount: _filteredUsers.length,
+                      itemBuilder: (context, index) {
+                        return _buildUserCard(_filteredUsers[index]);
+                      },
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          Container(
-            margin: EdgeInsets.all(25),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Color(0xFFE0E0E0)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .spaceBetween, // 🔹 pushes text left & arrow right
-              crossAxisAlignment: CrossAxisAlignment.center,
-
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Recent offers',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF11224E),
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Discover the most recent offers',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color(0xFF11224E),
-                  size: 20,
-                ),
-              ],
-            ),
-          ),
-
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // Profile image
-                        const CircleAvatar(radius: 20),
-                        const SizedBox(width: 10),
-                        // Name + time
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Amel B.',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF11224E),
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              'Posted 2h ago',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.favorite_border),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Looking for a delivery person for short errands around town.',
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Category: Delivery',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF11224E),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10),
-
-                // 🔹 Row 3 — location + message button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: const [
-                        Icon(
-                          Icons.location_on,
-                          color: Color(0xFFFF7A00),
-                          size: 18,
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          'Algiers, Algeria',
-                          style: TextStyle(fontSize: 13, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-
-                    // Message icon
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.message_outlined),
-                      color: Color(0xFF11224E),
-                    ),
-                  ],
-                ),
-              ],
-            ),
           ),
         ],
       ),
-
       bottomNavigationBar: const Navbar(),
-    );
-  }
-
-  Widget _buildCategoryCard(String title) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10),
-      height: 40,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 10,
-      ), // keep some padding
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE0E0E0)),
-      ),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Color(0xFF11224E),
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-      ),
     );
   }
 }

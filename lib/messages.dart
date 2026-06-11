@@ -15,7 +15,7 @@ class _MessagesState extends State<Messages> {
     final List<Map<String, String>> chats = [
       {
         "name": "Sofia Ahmed",
-        "message": "Hey! How’s your project going?",
+        "message": "Hey! How's your project going?",
         "time": "2h ago",
         "image": "https://i.pravatar.cc/150?img=1",
       },
@@ -33,7 +33,7 @@ class _MessagesState extends State<Messages> {
       },
       {
         "name": "Ali Ben",
-        "message": "I’ll send the files soon.",
+        "message": "I'll send the files soon.",
         "time": "1d ago",
         "image": "https://i.pravatar.cc/150?img=4",
       },
@@ -46,7 +46,7 @@ class _MessagesState extends State<Messages> {
     ];
 
     return Scaffold(
-      backgroundColor: Color(0xFFF7F8FC),
+      backgroundColor: const Color(0xFFF7F8FC),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         toolbarHeight: 90,
@@ -55,15 +55,17 @@ class _MessagesState extends State<Messages> {
             children: [
               TextSpan(
                 text: 'Chats',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),
         ),
-
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: GestureDetector(
@@ -76,7 +78,6 @@ class _MessagesState extends State<Messages> {
           ),
         ],
       ),
-
       body: Column(
         children: [
           Container(
@@ -88,7 +89,6 @@ class _MessagesState extends State<Messages> {
             ),
             child: Row(
               children: [
-                // Search bar
                 Expanded(
                   child: TextField(
                     decoration: InputDecoration(
@@ -114,36 +114,32 @@ class _MessagesState extends State<Messages> {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Chat(
-                    userName: 'Sarah Johnson',
-                    profileImage: 'assets/profile1.png',
-                  ),
-                ),
-              );
-            },
-
-            child: Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(20),
-              height:
-                  650, // 👈 Change this to make the container taller/shorter
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(15),
-              ),
-
-              // Chat list inside scroll view
-              child: ListView.builder(
-                itemCount: chats.length,
-                itemBuilder: (context, index) {
-                  final chat = chats[index];
-                  return Container(
-                    // margin: const EdgeInsets.only(left:20,right:20),
+          Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.all(20),
+            height: 650,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ListView.builder(
+              itemCount: chats.length,
+              itemBuilder: (context, index) {
+                final chat = chats[index];
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Chat(
+                          userName: chat["name"]!,
+                          profileImage: chat["image"]!,
+                          userId: (index + 1).toString(), // ✅ CORRIGÉ
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
                     padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF7F8FC),
@@ -157,14 +153,11 @@ class _MessagesState extends State<Messages> {
                     ),
                     child: Row(
                       children: [
-                        // Profile Picture
                         CircleAvatar(
                           radius: 25,
                           backgroundImage: NetworkImage(chat["image"]!),
                         ),
                         const SizedBox(width: 12),
-
-                        // Name + message
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,8 +181,6 @@ class _MessagesState extends State<Messages> {
                             ],
                           ),
                         ),
-
-                        // Dot + Time
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
@@ -213,14 +204,13 @@ class _MessagesState extends State<Messages> {
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
-
       bottomNavigationBar: const Navbar(),
     );
   }

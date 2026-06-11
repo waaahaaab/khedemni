@@ -13,9 +13,7 @@ class Onboard1 extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Center(
-              child: Image.asset('assets/on1.png',
-               width: 400,
-               height: 500,),
+              child: Image.asset('assets/on1.png', width: 400, height: 500),
             ),
           ),
           Expanded(
@@ -24,8 +22,10 @@ class Onboard1 extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius:
-                    BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
               ),
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -59,52 +59,35 @@ class Onboard1 extends StatelessWidget {
 
                   const Spacer(),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 250,
-                        height:87 ,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF7A00),
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                          ),
-                          child: const Text('Choose Interests', style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                             fontSize: 20,
-                            fontWeight: FontWeight.bold)),
+                  // ======= New SINGLE BUTTON =======
+                  SizedBox(
+                    width: 280,
+                    height: 87,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Onboard2()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFF7A00),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
                         ),
                       ),
-
-                      SizedBox(
-                        width: 130,
-                        height: 87,
-                        child: OutlinedButton(
-                          onPressed: () {
-                             Navigator.push(
-                             context,
-                             MaterialPageRoute(
-                              builder: (context) =>  Onboard2(),)
-                           );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide.none,
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                          ),
-                          child: const Text('Skip', style: TextStyle(
-                            color: Color(0xFFFF7A00),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 16),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
