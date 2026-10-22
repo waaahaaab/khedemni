@@ -116,6 +116,15 @@ EMAIL_FROM=your_email@gmail.com
 | PUT | `/api/offers/:id` | Update an offer |
 | DELETE | `/api/offers/:id` | Delete an offer |
 
+## Security
+
+Never commit real credentials, API keys, or `.env` files.
+
+Use `khedemni-backend/.env.example` as a template
+for local configuration.
+
+For reporting security vulnerabilities, see [SECURITY.md](SECURITY.md).
+
 ---
 
 ## Author
